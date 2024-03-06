@@ -54,7 +54,7 @@ invisible_btn = gr.Button(interactive=False, visible=False)
 controller_url = None
 enable_moderation = False
 
-acknowledgment_md = """
+_tmp = """
 ### Terms of Service
 
 Users are required to agree to the following terms before using the service:
@@ -77,6 +77,7 @@ We thank [Kaggle](https://www.kaggle.com/), [MBZUAI](https://mbzuai.ac.ae/), [a1
     <img src="https://storage.googleapis.com/public-arena-asset/huggingface.png" alt="HuggingFace">
 </div>
 """
+acknowledgment_md = """
 
 # JSON file format of API-based models:
 # {
@@ -600,7 +601,8 @@ def get_model_description_md(models):
 
 
 def build_about():
-    about_markdown = """
+    about_markdown = ""
+    _tmp = """
 # About Us
 Chatbot Arena is an open-source research project developed by members from [LMSYS](https://lmsys.org/about/) and UC Berkeley [SkyLab](https://sky.cs.berkeley.edu/).  Our mission is to build an open crowdsourced platform to collect human feedback and evaluate LLMs under real-world scenarios. We open-source our [FastChat](https://github.com/lm-sys/FastChat) project at GitHub and release chat and human feedback datasets [here](https://github.com/lm-sys/FastChat/blob/main/docs/dataset_release.md). We invite everyone to join us in this journey!
 
@@ -620,8 +622,9 @@ Chatbot Arena is an open-source research project developed by members from [LMSY
 - Download our datasets and models on [HuggingFace](https://huggingface.co/lmsys)
 
 ## Acknowledgment
-We thank [SkyPilot](https://github.com/skypilot-org/skypilot) and [Gradio](https://github.com/gradio-app/gradio) team for their system support.
-We also thank [Kaggle](https://www.kaggle.com/), [MBZUAI](https://mbzuai.ac.ae/), [a16z](https://www.a16z.com/), [Together AI](https://www.together.ai/), [Anyscale](https://www.anyscale.com/), [HuggingFace](https://huggingface.co/) for their generous sponsorship. Learn more about partnership [here](https://lmsys.org/donations/).
+感谢 [SkyPilot](https://github.com/skypilot-org/skypilot) and [Gradio](https://github.com/gradio-app/gradio) team for their system support.
+We also thank [Kaggle](https://www.kaggle.com/), [MBZUAI](https://mbzuai.ac.ae/), [Anyscale](https://www.anyscale.com/), [HuggingFace](https://huggingface.co/) for their generous sponsorship.
+Learn more about partnership [here](https://lmsys.org/donations/).
 
 <div class="sponsor-image-about">
     <img src="https://storage.googleapis.com/public-arena-asset/kaggle.png" alt="Kaggle">

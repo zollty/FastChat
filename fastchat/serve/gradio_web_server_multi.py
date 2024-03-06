@@ -117,7 +117,7 @@ window.__gradio_mode__ = "app";
         head=head_js,
     ) as demo:
         with gr.Tabs() as tabs:
-            with gr.Tab("Arena (battle)", id=0):
+            with gr.Tab("Arena (匿名battle)", id=0):
                 side_by_side_anony_list = build_side_by_side_ui_anony(models)
 
             with gr.Tab("Arena (side-by-side)", id=1):
@@ -125,7 +125,7 @@ window.__gradio_mode__ = "app";
 
             with gr.Tab("Direct Chat", id=2):
                 single_model_list = build_single_model_ui(
-                    models, add_promotion_links=True
+                    models, add_promotion_links=False
                 )
 
             with gr.Tab("Vision Direct Chat", id=3, visible=args.multimodal):
@@ -141,8 +141,8 @@ window.__gradio_mode__ = "app";
                 with gr.Tab("Leaderboard", id=4):
                     build_leaderboard_tab(elo_results_file, leaderboard_table_file)
 
-            with gr.Tab("About Us", id=5):
-                about = build_about()
+            # with gr.Tab("About Us", id=4):
+            #     about = build_about()
 
         url_params = gr.JSON(visible=False)
 

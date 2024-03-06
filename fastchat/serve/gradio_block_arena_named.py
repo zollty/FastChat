@@ -276,7 +276,8 @@ def flash_buttons():
 
 
 def build_side_by_side_ui_named(models):
-    notice_markdown = """
+    notice_markdown = ""
+    _tmp = """
 # ⚔️  Chatbot Arena: Benchmarking LLMs in the Wild
 | [Blog](https://lmsys.org/blog/2023-05-03-arena/) | [GitHub](https://github.com/lm-sys/FastChat) | [Paper](https://arxiv.org/abs/2306.05685) | [Dataset](https://github.com/lm-sys/FastChat/blob/main/docs/dataset_release.md) | [Twitter](https://twitter.com/lmsysorg) | [Discord](https://discord.gg/HSWAKCrnFx) |
 
