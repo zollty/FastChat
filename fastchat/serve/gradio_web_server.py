@@ -77,7 +77,7 @@ We thank [Kaggle](https://www.kaggle.com/), [MBZUAI](https://mbzuai.ac.ae/), [a1
     <img src="https://storage.googleapis.com/public-arena-asset/huggingface.png" alt="HuggingFace">
 </div>
 """
-acknowledgment_md = """
+acknowledgment_md = ""
 
 # JSON file format of API-based models:
 # {
