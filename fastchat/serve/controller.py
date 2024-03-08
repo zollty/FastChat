@@ -119,7 +119,7 @@ class Controller:
 
     def refresh_all_workers(self):
         old_info = dict(self.worker_info)
-        self.worker_info = {}
+        #self.worker_info = {}
 
         for w_name, w_info in old_info.items():
             if not self.register_worker(
