@@ -412,10 +412,6 @@ async def show_available_models():
 @app.post("/v1/chat/completions", dependencies=[Depends(check_api_key)])
 async def create_chat_completion(request: ChatCompletionRequest):
     """Creates a completion for the chat message"""
-    print("--------------------------------")
-    print(request)
-    print("--------------------------------")
-    logger.error("-----------123---------------------")
     error_check_ret = await check_model(request)
     if error_check_ret is not None:
         return error_check_ret
@@ -546,10 +542,6 @@ async def chat_completion_stream_generator(
 
 @app.post("/v1/completions", dependencies=[Depends(check_api_key)])
 async def create_completion(request: CompletionRequest):
-    print("--------------------------------")
-    print(request)
-    print("--------------------------------")
-    logger.error("-----------123---------------------")
     error_check_ret = await check_model(request)
     if error_check_ret is not None:
         return error_check_ret
