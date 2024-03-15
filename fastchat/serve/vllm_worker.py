@@ -198,6 +198,9 @@ def create_background_tasks(request_id):
 @app.post("/worker_generate_stream")
 async def api_generate_stream(request: Request):
     params = await request.json()
+    ok, msg = worker.check_length(params)
+    if not ok:
+        return StreamingResponse(worker.to_stream(msg))
     await acquire_worker_semaphore()
     request_id = random_uuid()
     params["request_id"] = request_id
@@ -210,6 +213,9 @@ async def api_generate_stream(request: Request):
 @app.post("/worker_generate")
 async def api_generate(request: Request):
     params = await request.json()
+    ok, msg = worker.check_length(params)
+    if not ok:
+        return StreamingResponse(worker.to_stream(msg))
     await acquire_worker_semaphore()
     request_id = random_uuid()
     params["request_id"] = request_id

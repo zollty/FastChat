@@ -1,13 +1,14 @@
 import asyncio
 import threading
 import time
+import json
 from typing import List
 
 from fastapi import FastAPI, Request, BackgroundTasks
 from fastapi.responses import StreamingResponse, JSONResponse
 import requests
 
-from fastchat.constants import WORKER_HEART_BEAT_INTERVAL
+from fastchat.constants import WORKER_HEART_BEAT_INTERVAL, ErrorCode
 from fastchat.conversation import Conversation
 from fastchat.utils import pretty_print_semaphore, build_logger
 
@@ -175,6 +176,30 @@ class BaseModelWorker:
 
     def get_embeddings(self, params):
         raise NotImplementedError
+    
+    def check_length(self, params):
+        prompt = params["prompt"]
+        max_tokens = params.get("max_new_tokens", -1)
+        if max_tokens <= 0:  # model worker not support max_tokens=None
+            max_tokens = 1024 * 1024 # 1000k
+
+        context_len = self.context_len if self.context_len else 1024 * 1024
+            
+        token_num = self.count_token({"prompt": prompt})["count"]
+        length = min(max_tokens, context_len - token_num)
+
+        if length <= 0:
+            ret = {
+                "text": f"This model's maximum context length is {context_len} tokens. However, your messages resulted in {token_num} tokens. Please reduce the length of the messages.",
+                "error_code": ErrorCode.CONTEXT_OVERFLOW,
+            }
+            return False, json.dumps(ret).encode() + b"\0"
+        else:
+            params["max_new_tokens"] = length
+            return True, None
+    
+    def to_stream(msg: str):
+        yield msg
 
 
 def release_worker_semaphore():
@@ -196,6 +221,9 @@ def create_background_tasks():
 @app.post("/worker_generate_stream")
 async def api_generate_stream(request: Request):
     params = await request.json()
+    ok, msg = worker.check_length(params)
+    if not ok:
+        return StreamingResponse(worker.to_stream(msg))
     await acquire_worker_semaphore()
     generator = worker.generate_stream_gate(params)
     background_tasks = create_background_tasks()
@@ -205,6 +233,9 @@ async def api_generate_stream(request: Request):
 @app.post("/worker_generate")
 async def api_generate(request: Request):
     params = await request.json()
+    ok, msg = worker.check_length(params)
+    if not ok:
+        return StreamingResponse(worker.to_stream(msg))
     await acquire_worker_semaphore()
     output = await asyncio.to_thread(worker.generate_gate, params)
     release_worker_semaphore()
@@ -214,6 +245,9 @@ async def api_generate(request: Request):
 @app.post("/worker_get_embeddings")
 async def api_get_embeddings(request: Request):
     params = await request.json()
+    ok, msg = worker.check_length(params)
+    if not ok:
+        return JSONResponse(msg)
     await acquire_worker_semaphore()
     embedding = worker.get_embeddings(params)
     release_worker_semaphore()
