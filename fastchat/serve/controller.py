@@ -279,9 +279,9 @@ class Controller:
         }
         
     def worker_api_get_context_len(self):
-        res = copy.deepcopy(dict(self.worker_info))
-
-        for w_name in self.worker_info:
+        res = {}
+        for w_name, w_info in self.worker_info.items():
+            res[w_name] = copy.deepcopy(dict(w_info))
             worker_status = self.get_worker_model_details(w_name)
             if worker_status is not None:
                 res[w_name]["context_length"] = worker_status["context_length"]
