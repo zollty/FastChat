@@ -26,6 +26,7 @@ from fastchat.constants import (
     SERVER_ERROR_MSG,
 )
 from fastchat.utils import build_logger
+import copy
 
 
 logger = build_logger("controller", "controller.log")
@@ -104,6 +105,19 @@ class Controller:
     def get_worker_status(self, worker_name: str):
         try:
             r = requests.post(worker_name + "/worker_get_status", timeout=5)
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Get status fails: {worker_name}, {e}")
+            return None
+
+        if r.status_code != 200:
+            logger.error(f"Get status fails: {worker_name}, {r}")
+            return None
+
+        return r.json()
+
+    def get_worker_model_details(self, worker_name: str):
+        try:
+            r = requests.post(worker_name + "/model_details", timeout=5)
         except requests.exceptions.RequestException as e:
             logger.error(f"Get status fails: {worker_name}, {e}")
             return None
@@ -263,6 +277,16 @@ class Controller:
             "speed": speed,
             "queue_length": queue_length,
         }
+        
+    def worker_api_get_context_len(self):
+        res = copy.deepcopy(dict(self.worker_info))
+
+        for w_name in self.worker_info:
+            worker_status = self.get_worker_model_details(w_name)
+            if worker_status is not None:
+                res[w_name]["context_length"] = worker_status["context_length"]
+
+        return res
 
     def worker_api_generate_stream(self, params):
         worker_addr = self.get_worker_address(params["model"])
@@ -296,9 +320,16 @@ async def register_worker(request: Request):
         data.get("multimodal", False),
     )
 
+
 @app.post("/get_all_workers")
 async def get_all_workers():
     return {"workers": dict(controller.worker_info)}
+
+
+@app.post("/get_all_workers_with_context_len")
+async def get_all_workers_with_context_len():
+    return {"workers": controller.worker_api_get_context_len()}
+
 
 @app.post("/refresh_all_workers")
 async def refresh_all_workers():
