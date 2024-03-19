@@ -26,7 +26,6 @@ from fastchat.constants import (
     SERVER_ERROR_MSG,
 )
 from fastchat.utils import build_logger
-import copy
 
 
 logger = build_logger("controller", "controller.log")
@@ -61,6 +60,13 @@ def heart_beat_controller(controller):
         time.sleep(CONTROLLER_HEART_BEAT_EXPIRATION)
         controller.remove_stale_workers_by_expiration()
 
+def props_with_(obj):
+    params = {}
+    for name in dir(obj):
+        value = getattr(obj, name)
+        if not name.startswith('__') and not callable(value):
+            params[name] = value
+    return params
 
 class Controller:
     def __init__(self, dispatch_method: str):
@@ -281,7 +287,7 @@ class Controller:
     def worker_api_get_context_len(self):
         res = {}
         for w_name, w_info in self.worker_info.items():
-            res[w_name] = copy.deepcopy(dict(w_info))
+            res[w_name] = props_with_(w_info)
             worker_status = self.get_worker_model_details(w_name)
             if worker_status is not None:
                 res[w_name]["context_length"] = worker_status["context_length"]
