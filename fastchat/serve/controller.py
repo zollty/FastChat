@@ -296,6 +296,9 @@ async def register_worker(request: Request):
         data.get("multimodal", False),
     )
 
+@app.post("/get_all_workers")
+async def get_all_workers():
+    return {"workers": dict(controller.worker_info)}
 
 @app.post("/refresh_all_workers")
 async def refresh_all_workers():
