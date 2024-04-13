@@ -193,6 +193,7 @@ class BaseModelWorker:
                 "text": f"This model's maximum context length is {context_len} tokens. However, your messages resulted in {token_num} tokens. Please reduce the length of the messages.",
                 "error_code": ErrorCode.CONTEXT_OVERFLOW,
             }
+            logger.error(ret["text"])
             return False, json.dumps(ret).encode() + b"\0"
         else:
             params["max_new_tokens"] = length
