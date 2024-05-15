@@ -79,7 +79,7 @@ ttl_cache = cachetools.TTLCache(maxsize=100, ttl=60)
 
 async def fetch_remote(url, pload=None, name=None):
     async with aiohttp.ClientSession(timeout=fetch_timeout) as session:
-        async with session.post(url, json=pload) as response:
+        async with session.post(url, json=pload, proxy=None) as response:
             chunks = []
             if response.status != 200:
                 ret = {
