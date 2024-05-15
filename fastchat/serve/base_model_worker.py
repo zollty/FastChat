@@ -97,7 +97,7 @@ class BaseModelWorker:
             "worker_status": self.get_status(),
             "multimodal": self.multimodal,
         }
-        r = requests.post(url, json=data)
+        r = requests.post(url, json=data, proxies={"http": None, "https": None})
         assert r.status_code == 200
 
     def send_heart_beat(self):
@@ -119,6 +119,7 @@ class BaseModelWorker:
                         "queue_length": self.get_queue_length(),
                     },
                     timeout=5,
+                    proxies={"http": None, "https": None},
                 )
                 exist = ret.json()["exist"]
                 break
